@@ -5,7 +5,7 @@ class people:#people父类
     score=0
     lose=False
     def start(self,give):
-        if random.randint(0,1)<give:
+        if random.random()<give:
             return True
         else:
             return False
@@ -19,8 +19,8 @@ class pink(people):
 class blue(people):
     give=1
     team ="Blue"
-    def check(self,los):
-        if(los==True):
+    def check(self,lose):
+        if(lose==True):
             self.give=0
         else:
             self.give=1
@@ -50,6 +50,17 @@ class green(people):
             else:
                 self.give = 1
 
+def givetype(people):
+    typ={
+        "<class '__main__.black'>":black(),
+        "<class '__main__.yellow'>":yellow(),
+        "<class '__main__.green'>":green(),
+        "<class '__main__.pink'>":pink(),
+        "<class '__main__.blue'>":blue()
+    }
+    #print(str(type(people)))
+    return typ.get(str(type(people)),None)
+
 
 def stGame(a,b):#进行投币
     if(a.start(a.give)==True and b.start(b.give)==True):
@@ -58,13 +69,13 @@ def stGame(a,b):#进行投币
         a.lose = False
         b.lose = False
     elif a.start(a.give)==True and b.start(b.give)==False:
-        a.score+=-1
+        a.score-=1
         b.score+=3
         a.lose=True
         b.lose = False
     elif a.start(a.give)==False and b.start(b.give)==True:
         a.score+=3
-        b.score+=-1
+        b.score-=1
         b.lose=True
         a.lose = False
     else:
@@ -115,21 +126,28 @@ def getTeam(arr):#放入集合把其team找到
     for iiiii in range(0,len(arr)):
         tea.append(arr[iiiii].team)
     return tea
-team(8,1,5,3,8)
-for Alltime in range(100):#进行几轮
-    for time in range(1):#每次筛选前比赛几次
-        for ii in range(0,len(arr)):
-            for iii in range(ii+1,len(arr)):
+team(1,0,1,23,0)
+for Alltime in range(10):#进行几轮
+    #print(getMark(arr))
+    for ii in range(0,len(arr)):
+        for iii in range(ii+1,len(arr)):
+            for time in range(10):  # 每次筛选前比赛几次
                 stGame(arr[ii], arr[iii])
+            for l in arr:
+                l.lose = False
+                l.check(l.lose)
     mark=getMark(arr)#开始筛选去掉最低5个变为最高五个
     Csort(arr,mark)
-    for remove in range(0,5):
-        arr[remove]=arr[-remove-1]
     mark=getMark(arr)
-    team=getTeam(arr)
-    for lo in arr:
-        lo.lose=False#结束筛选
-
-print(mark)
-print(team)
-
+    tea = getTeam(arr)
+    get=[]
+    for prin in range(0,len(mark)):
+        get.append([mark[prin],tea[prin]])
+    print(get)
+    #print(getTeam(arr))
+    print()
+    for remove in range(0,5):
+        arr[remove]=givetype(arr[-1-remove])
+    #mark=getMark(arr)
+    for lo in arr:#结束筛选
+        lo.score=0
